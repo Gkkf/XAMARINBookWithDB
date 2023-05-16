@@ -15,7 +15,6 @@ namespace KsiazkaXAMARIN
     {
         public int page = 0;
         public int pageSize = 0;
-        int counter = 0;
         public string searchBarText = "";
 
         public MainPage()
@@ -43,18 +42,8 @@ namespace KsiazkaXAMARIN
                 pageCount.Text = (page+1).ToString();
             }
 
-            if(count%Functions.max_users == 0)
-            {
-                pageSize = count/ Functions.max_users;
-            }
-            else
-            {
-                pageSize = count/Functions.max_users+1;
-            }
-
-            float prog = page / pageSize;
-
-            progress.Progress = prog;
+            pageSize = Functions.MaxPage();
+            
             listView.ItemsSource = Functions.GetPersons(page, searchBarText);
             listView.SelectedItem = null;
         }
@@ -89,18 +78,6 @@ namespace KsiazkaXAMARIN
             OptionsPage page = new OptionsPage();
             page.toEdit = false;
             await Navigation.PushAsync(page);
-
-            //funkcja strzałkowa (anonimowa), strzałka oddziela definicje od implementacji
-            //page.Disappearing += (object Psender, EventArgs Pe) =>
-            //{
-            //    var person = page.person;
-            //
-            //    if (!string.IsNullOrEmpty(person.Name) || !string.IsNullOrEmpty(person.Surname) || !string.IsNullOrEmpty(person.Number) || !string.IsNullOrEmpty(person.Email))
-            //    {
-            //        //persons.Add(new Person { Name = person.Name, Surname = person.Surname, Number = person.Number, Email = person.Email });
-            //    }
-            //
-            //};
         }
 
         //edycja po przytrzymaniu
@@ -115,19 +92,6 @@ namespace KsiazkaXAMARIN
                 optionsPage.person = selected;
                 await Navigation.PushAsync(optionsPage);
             }
-
-            //funkcja strzałkowa (anonimowa), strzałka oddziela definicje od implementacji
-            //optionsPage.Disappearing += (object Psender, EventArgs Pe) =>
-            //{
-            //    var pers = optionsPage.person;
-            //
-            //    //sprawdzanie czy dane zostały zmienione i, jesli tak, podmiana ich w liście, oraz załadowanie ponownie listy
-            //    if (!string.IsNullOrEmpty(pers.Name) || !string.IsNullOrEmpty(pers.Surname) || !string.IsNullOrEmpty(pers.Number) || !string.IsNullOrEmpty(pers.Email))
-            //    {
-            //        persons[id] = new Person { Name = pers.Name, Surname = pers.Surname, Number = pers.Number, Email = pers.Email };
-            //        Load();
-            //    }
-            //};
         }
 
         //usuwanie po przytrzymaniu
@@ -148,6 +112,12 @@ namespace KsiazkaXAMARIN
             }
 
             ++page;
+
+            if (progress.Progress < Functions.MaxPage())
+            {
+                progress.Progress += 1.0/Functions.MaxPage();
+            }
+
             pageCount.Text = (page + 1).ToString();
             Load();
         }
@@ -161,6 +131,12 @@ namespace KsiazkaXAMARIN
             }
 
             --page;
+
+            if (progress.Progress > 0)
+            {
+                progress.Progress -= 1.0 / Functions.MaxPage();
+            }
+
             pageCount.Text = (page + 1).ToString();
             Load(); 
         }
