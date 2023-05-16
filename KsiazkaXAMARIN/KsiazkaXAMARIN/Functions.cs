@@ -16,7 +16,8 @@ namespace KsiazkaXAMARIN
         public static int max_users = 5;
         public static Action refresh;
         public static string Table_name = "persons";
-
+         
+        //creating connection to db
         public static void Open()
         {
             if(con != null)
@@ -34,6 +35,7 @@ namespace KsiazkaXAMARIN
             }
         }
 
+        //function to add new table in DB
         public static void AddTable(string tableName)
         {
             con.Execute($"CREATE TABLE IF NOT EXISTS {tableName} (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name STRING, Surname STRING, Number TEXT, Email STRING)");
@@ -45,6 +47,7 @@ namespace KsiazkaXAMARIN
             }
         }
 
+        //returns table max pages to show
         public static int MaxPage(string query = "")
         {
             string where = "";
@@ -59,6 +62,7 @@ namespace KsiazkaXAMARIN
             return data;
         }
 
+        //function to add new person to table
         public static void AddPerson(Person person)
         {
             con.Execute($"INSERT INTO {Table_name} (Name, Surname, Number, Email) VALUES ('{person.Name}','{person.Surname}','{person.Number}','{person.Email}')");
@@ -68,6 +72,8 @@ namespace KsiazkaXAMARIN
             }
         }
 
+
+        //function to edit selected person in table
         public static void EditPerson(Person person, Person oldPerson)
         {
             con.Execute($"UPDATE {Table_name} SET Name='{person.Name}',Surname='{person.Surname}',Number='{person.Number}',Email='{person.Email}' WHERE Name='{oldPerson.Name}' AND Surname='{oldPerson.Surname}' AND Number='{oldPerson.Number}' AND Email='{oldPerson.Email}'");
@@ -77,6 +83,7 @@ namespace KsiazkaXAMARIN
             }
         }
 
+        //function to delete selected person in table
         public static void DeletePerson(Person person)
         {
             con.Execute($"DELETE FROM {Table_name} WHERE Name='{person.Name}' AND Surname='{person.Surname}' AND Number='{person.Number}' AND Email='{person.Email}'");
@@ -86,6 +93,7 @@ namespace KsiazkaXAMARIN
             }
         }
 
+        //function returns list of persons to show
         public static List<Person> GetPersons(int page = 0, string query = "")
         {
             string where = "";
